@@ -1,0 +1,63 @@
+import java.io.*;
+import java.util.ArrayList;
+
+/**
+ * BankData.java
+ *
+ * Demonstrates file handling using Java Serialization.
+ * Saves and loads bank account data into bank_data.ser file.
+ */
+
+// Account class must implement Serializable
+class Account implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    int accountNumber;
+    String name;
+    double balance;
+
+    public Account(int accountNumber, String name, double balance) {
+        this.accountNumber = accountNumber;
+        this.name = name;
+        this.balance = balance;
+    }
+}
+
+public class BankData {
+
+    private static final String FILE_NAME = "bank_data.ser";
+
+    // Save data to file
+    public static void saveData(ArrayList<Account> accounts) {
+        try (ObjectOutputStream oos =
+                     new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+            oos.writeObject(accounts);
+            System.out.println("Bank data saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Error saving data.");
+        }
+    }
+
+    // Load data from file
+    public static ArrayList<Account> loadData() {
+        try (ObjectInputStream ois =
+                     new ObjectInputStream(new FileInputStream(FILE_NAME))) {
+            return (ArrayList<Account>) ois.readObject();
+        } catch (Exception e) {
+            System.out.println("No existing data found.");
+            return new ArrayList<>();
+        }
+    }
+
+    // Test main method
+    public static void main(String[] args) {
+
+        ArrayList<Account> accounts = loadData();
+        accounts.add(new Account(101, "John", 5000));
+        accounts.add(new Account(102, "Alice", 8000));
+
+        saveData(accounts);
+
+        System.out.println("Accounts stored in bank_data.ser");
+    }
+}
